@@ -10,12 +10,12 @@ import java.util.stream.LongStream;
 
 public class CompletableFutureExample {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        List<Long> longList = LongStream.range(1, 100)
+        List<Long> longList = LongStream.range(1, 1000)
                 .boxed().collect(Collectors.toList());
         ExecutorService executor = Executors.newCachedThreadPool();
         String val=null;
-        val=completableWithExecutor_withRunAsync(longList, executor);
-//        completableWithExecutor_withRunAsync(longList, executor);
+//        val=completableWithExecutor_withRunAsync(longList, executor);
+        completableWithExecutor_withRunAsync(longList, executor);
         System.out.println("Printing because can't wait for value : " + val);
 
     }
@@ -41,12 +41,12 @@ public class CompletableFutureExample {
         executor.shutdown();
     }
 
-    public static String completableWithExecutor_withRunAsync(List<Long> longList, ExecutorService executor) throws ExecutionException, InterruptedException {
+    public static Void completableWithExecutor_withRunAsync(List<Long> longList, ExecutorService executor) throws ExecutionException, InterruptedException {
 
-        CompletableFuture<String> cf = CompletableFuture.supplyAsync(() ->  modifyList(longList), executor)
-                .thenApply(list -> {
+        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> modifyList(longList), executor)
+                .thenRun(() -> {
                     CompletableFuture.runAsync(() -> {
-                        readUser(list);
+                        readUser(longList);
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
@@ -54,14 +54,13 @@ public class CompletableFutureExample {
                         }
                     }, executor);
                     CompletableFuture.runAsync(() -> {
-                        print(list);
+                        print(longList);
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }, executor);
-                    return "Chaining Completed";
                 });
         return cf.get();
     }
@@ -105,12 +104,9 @@ public class CompletableFutureExample {
     }
 
     public static void completableWithRunAsync_MultiTaskUsingExecutor(List<Long> longList, ExecutorService executor) throws ExecutionException, InterruptedException {
-       CompletableFuture<String> cf1=CompletableFuture.supplyAsync(() -> {
-            modifyList(longList);
-            return "Completed";
-        }, executor);
-        System.out.println(" First supplier: "+cf1.get() );;
-        CompletableFuture.allOf(cf1,
+       CompletableFuture<List<Long>> cf1=CompletableFuture.supplyAsync(() -> modifyList(longList), executor);
+        System.out.println(" First supplier: "+cf1.get() );
+        CompletableFuture.allOf(
                 CompletableFuture.supplyAsync(() -> {
                     readUser(longList);
                     return "Completed";
@@ -165,7 +161,7 @@ public class CompletableFutureExample {
     private static List<Long> modifyList(List<Long> list) {
         System.out.println(Thread.currentThread().getName());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
