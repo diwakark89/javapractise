@@ -10,7 +10,7 @@ import java.util.stream.LongStream;
 
 public class CompletableFutureExample {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        List<Long> longList = LongStream.range(1, 1000)
+        List<Long> longList = LongStream.range(1, 10000)
                 .boxed().collect(Collectors.toList());
         ExecutorService executor = Executors.newCachedThreadPool();
         String val=null;
@@ -47,19 +47,9 @@ public class CompletableFutureExample {
                 .thenRun(() -> {
                     CompletableFuture.runAsync(() -> {
                         readUser(longList);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }, executor);
                     CompletableFuture.runAsync(() -> {
                         print(longList);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }, executor);
                 });
         return cf.get();
