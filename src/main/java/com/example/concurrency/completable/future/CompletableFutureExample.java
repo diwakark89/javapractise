@@ -1,5 +1,7 @@
 package com.example.concurrency.completable.future;
 
+import com.example.concurrency.completable.future.model.User;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -163,10 +165,3 @@ public class CompletableFutureExample {
     }
 }
 
-class User {
-    long id;
-
-    public void setId(long id) {
-        this.id = id;
-    }
-}
