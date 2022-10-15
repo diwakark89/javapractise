@@ -18,16 +18,16 @@ public class LockExample {
 
     public void pingpong(String s, int times) {
         int counter = 1;
-        while(counter<=times) {
+        while (counter <= times) {
             run(s, counter);
-            counter = counter+1;
+            counter = counter + 1;
         }
     }
 
     public void run(String s, int counter) {
         lock.lock();
         try {
-            conditionMet.await(2, TimeUnit.SECONDS);
+            conditionMet.await(1, TimeUnit.SECONDS);
             System.out.println(s + " (" + counter + ")");
             conditionMet.signal();
         } catch (InterruptedException e) {
