@@ -5,8 +5,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileRead {
     public static void main(String[] args) throws IOException, URISyntaxException {
@@ -22,6 +26,8 @@ public class FileRead {
 
         System.out.println("\ngetResource : " + fileName);
         File file = app.getFileFromResource(fileName);
+
+        app.printFileContentUsingNIO(fileName);
         printFile(file);
 
     }
@@ -81,6 +87,20 @@ public class FileRead {
         }
 
     }
+    private void printFileContentUsingNIO(String fileName) throws IOException, URISyntaxException {
+        Path path = Paths.get(getClass().getClassLoader()
+                .getResource(fileName).toURI());
+
+        Stream<String> lines = Files.lines(path);
+
+        lines.map(line->{
+            System.out.println(line);
+            return line;
+        }).collect(Collectors.joining("\n"));
+        lines.close();
+    }
+
+
 
     // print input stream
     private static void printInputStream(InputStream is) {
